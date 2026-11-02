@@ -1,0 +1,36 @@
+# Tessera — one process, one shared world, in memory. Nothing here is
+# persisted: see docs/adr/0001-the-commons-lives-in-memory.md.
+
+[server]
+# Loopback locally. A container would set AUTUMN_SERVER__HOST=0.0.0.0.
+host = "127.0.0.1"
+port = 3000
+
+[log]
+level = "info"
+format = "Pretty"
+
+[health]
+path = "/health"
+
+# Painting is a fetch() POST carrying the token from the page's meta tag in an
+# x-csrf-token header.
+[security.csrf]
+enabled = true
+
+[session]
+backend = "memory"
+allow_memory_in_production = true
+
+# Nothing durable ticks. The weather is a tokio interval inside the process;
+# losing it on restart loses nothing anybody would miss.
+[jobs]
+backend = "memory"
+workers = 0
+
+# Live events: one in-process broadcast topic, `commons`. A new world is one
+# large message (bare geology plus every block's trace); a browser that falls
+# behind sees a gap in the sequence numbers and refetches the world.
+[channels]
+backend = "local"
+capacity = 256

@@ -1,0 +1,5 @@
+# Dev overrides, merged over autumn.toml under `cargo run`. There is no
+# database and no service to start: `cargo run --release -p tessera-app` serves.
+
+[log]
+level = "info"
