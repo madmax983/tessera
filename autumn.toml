@@ -34,3 +34,6 @@ workers = 0
 [channels]
 backend = "local"
 capacity = 256
+
+[security.trusted_hosts]
+hosts = ["127.0.0.1"]

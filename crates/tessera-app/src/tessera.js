@@ -11,13 +11,14 @@
   function post(url, data) {
     return fetch(url, {
       method: "POST", credentials: "same-origin",
-      headers: { "content-type": "application/x-www-form-urlencoded", "x-csrf-token": token },
+      // Without an explicit Accept, fetch sends */*, and Autumn answers errors with a whole HTML page.
+      headers: { accept: "application/json", "content-type": "application/x-www-form-urlencoded", "x-csrf-token": token },
       body: new URLSearchParams(data || {}),
     }).then(async (r) => {
       const text = await r.text();
       let j = null;
       try { j = JSON.parse(text); } catch (e) { j = null; }
-      if (!r.ok) throw new Error((j && (j.detail || j.message || j.error)) || text || String(r.status));
+      if (!r.ok) throw new Error((j && (j.detail || j.message || j.error)) || `the server answered ${r.status}`);
       return j;
     });
   }

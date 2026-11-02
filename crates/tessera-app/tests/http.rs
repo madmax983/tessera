@@ -131,6 +131,20 @@ async fn an_impossible_or_malformed_paint_is_refused() {
 }
 
 #[tokio::test]
+async fn a_refusal_reaches_the_browser_as_a_sentence() {
+    let c = client();
+    let r = c
+        .post("/paint")
+        .header("accept", "application/json")
+        .form("cells=0,0&brush=town")
+        .send()
+        .await;
+    r.assert_status(422);
+    let detail = json(&r)["detail"].as_str().unwrap().to_owned();
+    assert!(detail.contains("cannot hold"), "{detail}");
+}
+
+#[tokio::test]
 async fn growing_a_word_replaces_the_world_and_the_weather_toggles() {
     let c = client();
     let before = json(&c.get("/_world.json").send().await);
